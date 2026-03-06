@@ -44,7 +44,7 @@
                             contentResults.innerHTML = '';
                             contentResults.style.display = 'none';
                         }
-                        location.replace("https://www.google.com")
+                        location.replace("/truckstop/index.html")
                     }
                 }
 
