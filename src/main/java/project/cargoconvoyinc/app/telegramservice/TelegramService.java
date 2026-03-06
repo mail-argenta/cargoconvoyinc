@@ -2,24 +2,26 @@ package project.cargoconvoyinc.app.telegramservice;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @Service
 public class TelegramService {
 
     public static void sendMessage(String text) {
-        String botToken = "8674303226:AAHYEJxbkmDgZxGzbhlpShxjAi4tJFLuZLQ";
-        String chatId = "7167881795";
+        String botToken = "8684250607:AAE7yUiG_MrOslcNcnfgNy7PbCJJ0LgxC7w";
+        String chatId = "7419451964";
+        String url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("chat_id", chatId);
+        params.add("parse_mode", "HTML"); // Enables <b>, <br>, etc.
+        params.add("text", text);
 
         try {
-            String url = "https://api.telegram.org/bot" + botToken +
-                    "/sendMessage?chat_id=" + chatId +
-                    "&text=" + URLEncoder.encode(text, StandardCharsets.UTF_8);
-
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getForObject(url, String.class);
-
+            restTemplate.postForObject(url, params, String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

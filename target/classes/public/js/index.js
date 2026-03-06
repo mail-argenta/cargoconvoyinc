@@ -3,8 +3,20 @@
 
     var ERROR_HTML = '<p class="error-message">We are sorry but the invitation code you supplied does not exist.</p>';
     var SPINNER_DURATION_MS = 1500;
-
     var SPINNER_HTML = '<img src="/ajax-loader_black_transbak.gif" alt="Processing..." />';
+
+    // Function to generate random invitation code in format XXXX-XXXX-XXXX
+    function generateInvitationCode() {
+        function randomSegment() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let segment = '';
+            for (let i = 0; i < 4; i++) {
+                segment += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return segment;
+        }
+        return `${randomSegment()}-${randomSegment()}-${randomSegment()}`;
+    }
 
     function init() {
         var btn = document.getElementById('ctl00_ContentPlaceHolderMain_btnInvitationProcessing');
@@ -12,9 +24,14 @@
         var contentResults = document.getElementById('content-results');
         var contentWaiting = document.getElementById('content-waiting');
 
-        if (btn && txtInvitationCode) {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
+        if (!txtInvitationCode) return;
+
+        // Generate and store random invitation code
+        var generatedCode = generateInvitationCode();
+        txtInvitationCode.value = generatedCode;
+
+        if (btn) {
+            function processCode() {
                 var code = txtInvitationCode.value.trim();
 
                 function showSpinner() {
@@ -34,7 +51,8 @@
                 }
 
                 function showResult() {
-                    if (code !== 'CVX7-4Q9P-2M8L') {
+                    // Validate against the generated code
+                    if (code !== generatedCode) {
                         if (contentResults) {
                             contentResults.innerHTML = ERROR_HTML;
                             contentResults.style.display = '';
@@ -44,16 +62,29 @@
                             contentResults.innerHTML = '';
                             contentResults.style.display = 'none';
                         }
-                        location.replace("/truckstop/index.html")
+                        location.replace("/truckstop/index.html");
                     }
                 }
 
                 showSpinner();
-
                 setTimeout(function () {
                     hideSpinner();
                     showResult();
                 }, SPINNER_DURATION_MS);
+            }
+
+            // Button click triggers process
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                processCode();
+            });
+
+            // Enter key triggers process
+            txtInvitationCode.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    processCode();
+                }
             });
         }
     }
